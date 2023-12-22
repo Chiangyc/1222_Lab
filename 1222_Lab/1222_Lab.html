@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Rolling and Probability</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #dice-container {
+            text-align: center;
+        }
+
+        #diceResults {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .dice-row {
+            display: flex;
+            justify-content: center;
+        }
+
+        .dice-image {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+        }
+
+        #probability-table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #probability-table th, #probability-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        #probability-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        #probability-table td {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="dice-container">
+    <h2>Dice Rolling and Probability</h2>
+
+    <button id="rollButton">Roll Dice</button>
+
+    <div id="diceResults"></div>
+
+    <table id="probability-table">
+        <tr>
+            <th>Face</th>
+            <th>Percent</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    var frequencyTable = {};
+
+    function start() {
+        var button = document.getElementById("rollButton");
+        button.addEventListener("click", rollDice, false);
+        updateProbabilityTable();
+    }
+
+    function rollDice() {
+        var diceResults = Array.from({ length: 12 }, () => Math.floor(Math.random() * 6) + 1);
+
+        var diceContainer = document.getElementById("diceResults");
+        diceContainer.innerHTML = "";
+
+        for (var i = 0; i < 2; i++) {
+            var rowContainer = document.createElement("div");
+            rowContainer.classList.add("dice-row");
+
+            var row = diceResults.slice(i * 6, (i + 1) * 6);
+
+            row.forEach(function (face, index) {
+                var image = document.createElement("img");
+                image.src = "die" + face + ".png";
+                image.alt = "Dice Face " + face;
+                image.classList.add("dice-image");
+                rowContainer.appendChild(image);
+
+                if ((index + 1) % 6 === 0 && index !== row.length - 1) {
+                    rowContainer.appendChild(document.createElement("br"));
+                }
+            });
+
+            diceContainer.appendChild(rowContainer);
+        }
+
+        updateFrequencyTable(diceResults);
+        updateProbabilityTable();
+    }
+
+    function updateFrequencyTable(diceResults) {
+        frequencyTable = {};
+        diceResults.forEach(function (face) {
+            frequencyTable[face] = (frequencyTable[face] || 0) + 1;
+        });
+    }
+
+    function updateProbabilityTable() {
+        var table = document.getElementById("probability-table");
+        table.innerHTML = "<tr><th>Face</th><th>Percent</th></tr>";
+
+        for (var face = 1; face <= 6; face++) {
+            var count = frequencyTable[face] || 0;
+            var percent = (count / 12) * 100;
+            var row = "<tr><td>" + getDiceImage(face) + "</td><td>" + percent.toFixed(2) + "</td></tr>";
+            table.innerHTML += row;
+        }
+    }
+
+    function getDiceImage(face) {
+        return '<img src="die' + face + '.png" alt="Dice Face ' + face + '" class="dice-image">';
+    }
+
+    window.addEventListener("load", start, false);
+</script>
+
+</body>
+</html>
